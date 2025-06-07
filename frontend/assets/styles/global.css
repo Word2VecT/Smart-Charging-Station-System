@@ -1,0 +1,749 @@
+/* 全局样式 - 舒适的颜色层次 */
+:root {
+  --neon-blue: #00D9FF;
+  --neon-orange: #FF6B35;
+  --dark-bg: #0F0F23;
+  --dark-surface: #1A1A2E;
+  
+  /* 文字颜色层次 */
+  --text-primary: #E8F4FD;      /* 主要文字 - 淡蓝白色 */
+  --text-secondary: #B8D4EA;    /* 次要文字 - 蓝灰色 */
+  --text-muted: #8FA8C4;        /* 辅助文字 - 深蓝灰色 */
+  --text-accent-blue: #00D9FF;  /* 强调文字 - 霓虹蓝 */
+  --text-accent-orange: #FF6B35; /* 强调文字 - 霓虹橙 */
+  --text-success: #4ECDC4;      /* 成功文字 - 青色 */
+  --text-warning: #FFE66D;      /* 警告文字 - 黄色 */
+  --text-error: #FF6B6B;        /* 错误文字 - 红色 */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 强制设置全局背景 */
+html {
+  background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 100%) !important;
+  min-height: 100vh !important;
+}
+
+body {
+  background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 100%) !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--text-primary) !important;
+}
+
+/* 强制设置Vuetify应用背景 */
+.v-application {
+  background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 100%) !important;
+  min-height: 100vh !important;
+  color: var(--text-primary) !important;
+}
+
+#__nuxt {
+  background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 100%) !important;
+  min-height: 100vh !important;
+}
+
+.v-main {
+  background: transparent !important;
+}
+
+/* 文字颜色层次系统 */
+.v-application {
+  color: var(--text-primary) !important;
+}
+
+/* 标题层次 */
+.v-application h1,
+.v-application .text-h1,
+.v-application .display-1,
+.v-application .display-2 {
+  color: var(--text-accent-blue) !important;
+}
+
+.v-application h2,
+.v-application .text-h2,
+.v-application .text-h3 {
+  color: var(--text-primary) !important;
+}
+
+.v-application h3,
+.v-application h4,
+.v-application .text-h4,
+.v-application .text-h5,
+.v-application .text-h6 {
+  color: var(--text-secondary) !important;
+}
+
+/* 正文文字 */
+.v-application p,
+.v-application .text-body-1,
+.v-application .v-card-text {
+  color: var(--text-secondary) !important;
+}
+
+.v-application .text-body-2,
+.v-application .text-caption {
+  color: var(--text-muted) !important;
+}
+
+/* 卡片内容 */
+.v-application .v-card-title {
+  color: var(--text-primary) !important;
+}
+
+.v-application .v-card-subtitle {
+  color: var(--text-muted) !important;
+}
+
+/* 强制设置卡片样式 */
+.v-card {
+  background: rgba(26, 26, 46, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border-radius: 20px !important;
+  color: var(--text-primary) !important;
+}
+
+/* 强制设置数据表格样式 */
+.v-table {
+  background: rgba(26, 26, 46, 0.8) !important;
+  color: var(--text-primary) !important;
+}
+
+.v-table .v-table__wrapper {
+  background: transparent !important;
+}
+
+.v-table thead th {
+  background: rgba(0, 217, 255, 0.1) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 2px solid rgba(0, 217, 255, 0.3) !important;
+}
+
+.v-table tbody tr {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.v-table tbody tr:hover {
+  background: rgba(0, 217, 255, 0.1) !important;
+}
+
+.v-table tbody td {
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 强制容器背景 */
+.v-container {
+  background: transparent !important;
+}
+
+/* 强制所有文本颜色 */
+.v-application * {
+  color: inherit !important;
+}
+
+/* 强制页面级别背景 */
+.v-application > div,
+.v-application .v-main,
+.v-application .v-main .v-main__wrap,
+.nuxt-page,
+.nuxt-layout {
+  background: transparent !important;
+}
+
+/* 强制数据表格分页器样式 */
+.v-data-table-footer {
+  background: rgba(26, 26, 46, 0.9) !important;
+  border-top: 1px solid rgba(0, 217, 255, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+.v-data-table-footer .v-btn {
+  color: var(--text-primary) !important;
+}
+
+.v-data-table-footer .v-select {
+  color: var(--text-primary) !important;
+}
+
+/* 强制芯片样式 */
+.v-chip {
+  border-radius: 16px !important;
+}
+
+/* 强制工具提示样式 */
+.v-tooltip .v-overlay__content {
+  background: rgba(26, 26, 46, 0.9) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+}
+
+/* 强制下拉菜单样式 */
+.v-menu .v-overlay__content {
+  background: rgba(26, 26, 46, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.v-menu .v-list {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.v-menu .v-list-item {
+  color: var(--text-primary) !important;
+  border-radius: 8px !important;
+  margin: 2px 4px !important;
+}
+
+.v-menu .v-list-item:hover {
+  background: rgba(0, 217, 255, 0.1) !important;
+  color: var(--text-accent-blue) !important;
+}
+
+.v-menu .v-list-item--active {
+  background: rgba(0, 217, 255, 0.2) !important;
+  color: var(--text-accent-blue) !important;
+}
+
+.v-menu .v-list-item-title {
+  color: inherit !important;
+}
+
+/* 强制选择框下拉样式 */
+.v-select .v-overlay__content {
+  background: rgba(26, 26, 46, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.v-select .v-list {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+  padding: 4px !important;
+}
+
+.v-select .v-list-item {
+  color: var(--text-primary) !important;
+  border-radius: 8px !important;
+  margin: 2px 0 !important;
+  padding: 8px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.v-select .v-list-item:hover {
+  background: rgba(0, 217, 255, 0.1) !important;
+  color: var(--text-accent-blue) !important;
+  transform: translateX(2px) !important;
+}
+
+.v-select .v-list-item--active {
+  background: rgba(0, 217, 255, 0.2) !important;
+  color: var(--text-accent-blue) !important;
+  font-weight: 600 !important;
+}
+
+.v-select .v-list-item-title {
+  color: inherit !important;
+  font-size: 0.95rem !important;
+}
+
+/* 通用覆盖层样式（包括所有下拉菜单）*/
+.v-overlay__content {
+  background: rgba(26, 26, 46, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* 强制所有列表项样式 */
+.v-list {
+  background: transparent !important;
+}
+
+.v-list-item {
+  color: var(--text-primary) !important;
+}
+
+.v-list-item:hover {
+  background: rgba(0, 217, 255, 0.1) !important;
+}
+
+.v-list-item--active {
+  background: rgba(0, 217, 255, 0.2) !important;
+  color: var(--text-accent-blue) !important;
+}
+
+/* 强制下拉箭头颜色 */
+.v-input__append .v-icon {
+  color: var(--text-secondary) !important;
+}
+
+.v-select__selection {
+  color: var(--text-primary) !important;
+}
+
+/* 强制输入框样式 */
+.v-text-field .v-field {
+  color: var(--text-primary) !important;
+}
+
+.v-text-field .v-field input {
+  color: var(--text-primary) !important;
+}
+
+.v-text-field .v-field-label {
+  color: var(--text-secondary) !important;
+}
+
+/* 强制选择框输入样式 */
+.v-select .v-field {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(0, 217, 255, 0.2) !important;
+  border-radius: 12px !important;
+  color: var(--text-primary) !important;
+}
+
+.v-select .v-field:hover {
+  border-color: rgba(0, 217, 255, 0.4) !important;
+}
+
+.v-select .v-field--focused {
+  border-color: var(--text-accent-blue) !important;
+  box-shadow: 0 0 8px rgba(0, 217, 255, 0.2) !important;
+}
+
+.v-select .v-field-label {
+  color: var(--text-secondary) !important;
+}
+
+.v-select .v-field-label--floating {
+  color: var(--text-accent-blue) !important;
+}
+
+/* 强制圆形进度条样式 */
+.v-progress-circular {
+  color: var(--text-accent-blue) !important;
+}
+
+.v-progress-circular svg {
+  display: block !important;
+}
+
+.v-progress-circular circle {
+  stroke: currentColor !important;
+}
+
+/* 修复白色覆盖问题 */
+.v-application,
+.v-application * {
+  background-color: transparent !important;
+}
+
+.v-application .v-card,
+.v-application .v-sheet {
+  background: rgba(26, 26, 46, 0.8) !important;
+}
+
+/* 确保所有页面容器都有透明背景 */
+.page-container,
+.history-container,
+.detail-container,
+.auth-container {
+  background: transparent !important;
+}
+
+/* 玻璃形态效果 - 增强版 */
+.glass-morph {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 霓虹发光效果 - 柔和版本 */
+.neon-glow {
+  box-shadow: 
+    0 0 5px rgba(0, 217, 255, 0.3),
+    0 0 10px rgba(0, 217, 255, 0.2),
+    0 0 15px rgba(0, 217, 255, 0.1) !important;
+  transition: all 0.3s ease;
+}
+
+.neon-glow:hover {
+  box-shadow: 
+    0 0 8px rgba(0, 217, 255, 0.4),
+    0 0 16px rgba(0, 217, 255, 0.3),
+    0 0 24px rgba(0, 217, 255, 0.2) !important;
+}
+
+/* 脉动动画 */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* 悬浮动画 */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 渐变背景动画 */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #00D9FF, #FF6B35, #9C27B0, #4CAF50) !important;
+  background-size: 400% 400% !important;
+  animation: gradientShift 15s ease infinite;
+}
+
+/* 卡片悬浮效果 */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 20px rgba(0, 217, 255, 0.15) !important;
+}
+
+/* 未来感字体 */
+.futuristic-font {
+  font-family: 'Orbitron', monospace !important;
+  font-weight: 700 !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+}
+
+/* 进度条动画 */
+.progress-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-animated::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 粒子效果背景 */
+.particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #00D9FF;
+  border-radius: 50%;
+  animation: particleFloat 10s infinite linear;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 文本发光效果 - 柔和版本 */
+.text-glow {
+  text-shadow: 
+    0 0 4px rgba(0, 217, 255, 0.4),
+    0 0 8px rgba(0, 217, 255, 0.2) !important;
+}
+
+/* 按钮悬浮效果 */
+.btn-futuristic {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease !important;
+  color: var(--text-primary) !important;
+}
+
+.btn-futuristic::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-futuristic:hover::before {
+  left: 100%;
+}
+
+/* Vuetify组件样式强制覆盖 */
+.v-application .v-app-bar {
+  background: rgba(26, 26, 46, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(0, 217, 255, 0.2) !important;
+}
+
+.v-application .v-btn {
+  text-transform: none !important;
+}
+
+.v-application .v-chip {
+  color: inherit !important;
+}
+
+.v-application .v-alert {
+  backdrop-filter: blur(10px) !important;
+}
+
+/* 链接样式 */
+.v-application a {
+  color: var(--text-accent-blue) !important;
+  text-decoration: none !important;
+}
+
+.v-application a:hover {
+  color: var(--text-accent-orange) !important;
+}
+
+/* 特殊卡片样式 */
+.dashboard-card {
+  background: rgba(26, 26, 46, 0.8) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(0, 217, 255, 0.3) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.detail-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.detail-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(0, 217, 255, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.1) !important;
+}
+
+.progress-card {
+  background: rgba(76, 175, 80, 0.05) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(76, 175, 80, 0.3) !important;
+  border-radius: 16px !important;
+}
+
+.feature-item {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.feature-item:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(0, 217, 255, 0.4) !important;
+  box-shadow: 0 6px 15px rgba(0, 217, 255, 0.1) !important;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.stat-item:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(0, 217, 255, 0.4) !important;
+  box-shadow: 0 6px 15px rgba(0, 217, 255, 0.1) !important;
+}
+
+/* 特殊文字颜色类 */
+.text-primary-custom {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary-custom {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted-custom {
+  color: var(--text-muted) !important;
+}
+
+.text-accent-blue {
+  color: var(--text-accent-blue) !important;
+}
+
+.text-accent-orange {
+  color: var(--text-accent-orange) !important;
+}
+
+.text-success-custom {
+  color: var(--text-success) !important;
+}
+
+.text-warning-custom {
+  color: var(--text-warning) !important;
+}
+
+.text-error-custom {
+  color: var(--text-error) !important;
+}
+
+/* 状态指示器颜色 */
+.v-application .v-chip.v-chip--variant-outlined {
+  border-color: currentColor !important;
+}
+
+/* 表单和输入框样式 */
+.v-application .v-text-field input,
+.v-application .v-text-field textarea,
+.v-application .v-select input,
+.v-application .v-field input {
+  color: var(--text-primary) !important;
+}
+
+.v-application .v-field-label,
+.v-application .v-label {
+  color: var(--text-muted) !important;
+}
+
+/* 按钮文字颜色 */
+.v-application .v-btn--variant-outlined {
+  color: var(--text-primary) !important;
+}
+
+.v-application .v-btn--variant-flat {
+  color: var(--text-primary) !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .neon-glow {
+    box-shadow: 
+      0 0 3px rgba(0, 217, 255, 0.2),
+      0 0 6px rgba(0, 217, 255, 0.1) !important;
+  }
+  
+  .futuristic-font {
+    font-size: 1.2rem !important;
+    letter-spacing: 1px !important;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1A1A2E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00D9FF, #FF6B35);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FF6B35, #00D9FF);
+}
+
+/* 加载动画 */
+.loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 217, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #00D9FF;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+} 
