@@ -85,7 +85,7 @@
     uv venv
     ```
 
-    激活虚拟环境（uv venv 执行后会有提示，以那个为准）：
+    激活虚拟环境（`uv venv` 执行后会有提示，以那个为准）：
     - 在 macOS / Linux 上:
       ```sh
       source .venv/bin/activate
@@ -113,7 +113,7 @@
 
     一切就绪后，使用 `uvicorn` 启动开发服务器。
     ```sh
-    uvicorn main:app --reload
+    uv run fastapi dev
     ```
     服务器将在 `http://127.0.0.1:8000` 上运行。您可以在 `http://127.0.0.1:8000/docs` 查看 API 文档。
 
@@ -142,18 +142,3 @@
     bun dev
     ```
     前端应用将在 `http://localhost:3000` 上可用。
-
----
-
-## 快速启动摘要
-
-1.  **确保已经启动数据库**:
-2.  **启动后端**:
-    ```sh
-    cd backend
-    source .venv/bin/activate
-    python create_db.py # 仅首次需要
-    uv run fastapi dev
-    ```
-
-现在，您可以访问 `http://localhost:3000` 查看正在运行的应用程序。 
