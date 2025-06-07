@@ -109,7 +109,12 @@
     python create_db.py
     ```
 
-5.  **运行后端开发服务器**
+    添加初始充电桩，可能需要改一下写在代码里面
+    ```sql
+    psql -U tang -d charge -c "INSERT INTO ChargingPiles (pile_code, type, status, power_rate) VALUES ('F001', 'FAST', 'AVAILABLE', 60.0), ('T001', 'TRICKLE', 'AVAILABLE', 7.0);"
+    ```
+
+6.  **运行后端开发服务器**
 
     一切就绪后，使用 `uv` 启动开发服务器。
     ```sh
