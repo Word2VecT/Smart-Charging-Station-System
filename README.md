@@ -27,25 +27,25 @@
 
 在开始之前，请确保您的系统上已安装以下工具：
 
-> uv、bun 和 PostgreSQL 都可以用 Homebrew 或 scoop 安装，highly recommend.
+> uv、bun 和 PostgreSQL 都可以用 Homebrew、scoop 或 apt 安装，highly recommend.
 
 - **Python** (>= 3.10): [官方网站](https://www.python.org/)
 - **uv**: Python 包管理器。请访问 [官方网站](https://docs.astral.sh/uv/) 获取安装说明。
 - **Bun**: JavaScript 运行时和工具包。请访问 [官方网站](https://bun.sh/) 获取安装说明。
-- **PostgreSQL**: 数据库服务。推荐使用 [Homebrew](https://brew.sh/) (macOS) 或 [scoop](https://scoop.sh/) (Windows) 进行安装。
+- **PostgreSQL**: 数据库服务。推荐使用 [Homebrew](https://brew.sh/) (macOS) 或 [scoop](https://scoop.sh/) (Windows) 或 apt-get (Ubuntu) 等进行安装。
 
 ### 2. 数据库设置
 
-本项目使用 PostgreSQL 作为数据库。以下是在 macOS 上使用 Homebrew 进行设置的步骤。对于其他操作系统，请参考其官方文档，或者用 scoop 安装时应该会有启动后台服务的提示，下面的核心是创建一个和代码一致的数据库，从而避免修改代码。
+本项目使用 PostgreSQL 作为数据库。
 
-1.  **安装并启动 PostgreSQL**
+1.  **安装并启动 PostgreSQL**，示例是在 macOS 上使用 Homebrew 进行设置的步骤。对于其他操作系统，请参考其官方文档，或者用 scoop 安装时应该会有启动后台服务的提示。核心就是启动后台服务。
 
     ```sh
     brew install postgresql@17
     brew services start postgresql@17
     ```
 
-2.  **创建数据库用户和数据库**
+2.  **创建数据库用户和数据库**，下面的核心是创建一个和代码一致的数据库，从而避免修改代码，这个应该 windows 上可以直接用。
 
     您需要创建一个与项目配置匹配的用户 (`tang`) 和数据库 (`charge`)。
 
