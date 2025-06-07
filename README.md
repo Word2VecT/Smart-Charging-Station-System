@@ -85,7 +85,7 @@
     uv venv
     ```
 
-    激活虚拟环境：
+    激活虚拟环境（uv venv 执行后会有提示，以那个为准）：
     - 在 macOS / Linux 上:
       ```sh
       source .venv/bin/activate
