@@ -125,6 +125,16 @@
                   >
                     用户登录
                   </v-btn>
+                  <v-btn
+                  to="/admin-login"
+                  size="x-large"
+                  variant="outlined"
+                  color="red"
+                  class="btn-futuristic mb-2"
+                  prepend-icon="mdi-shield-account"
+                  >
+                  管理员入口
+                  </v-btn>
                 </div>
               </div>
             </v-col>

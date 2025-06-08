@@ -150,6 +150,23 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 
+# Admin Schemas
+
+class AdminBase(BaseModel):
+    username: str
+
+
+class AdminCreate(AdminBase):
+    password: str
+
+
+class Admin(AdminBase):
+    id: int
+
+    class Config:
+        from_attributes = True
+
+
 # PileLog Schemas
 class PileLogBase(BaseModel):
     pile_id: int

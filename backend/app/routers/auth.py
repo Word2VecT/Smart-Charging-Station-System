@@ -53,3 +53,4 @@ async def read_users_me(current_user: models.User = Depends(auth.get_current_act
     Gets the currently authenticated user's information.
     """
     return current_user
+

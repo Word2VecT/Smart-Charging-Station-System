@@ -1,6 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
-
+from app.routers import admin_resources  # 假设你把上面新路由放这里
 from app.database import SessionLocal
 from app.queue_manager import queue_manager
 from app.routers import admin as admin_router
@@ -12,6 +12,8 @@ from app.services.charging_monitor_service import charging_monitor_service
 from app.services.scheduling_service import scheduling_service
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import admin_auth as admin_auth_router
+
 
 
 async def run_scheduler_periodically():
@@ -96,7 +98,8 @@ app.include_router(requests_router.router)
 app.include_router(admin_router.router)
 app.include_router(orders_router.router)
 app.include_router(history_router.router)
-
+app.include_router(admin_auth_router.router)
+app.include_router(admin_resources.router)
 
 @app.get("/", tags=["Root"])
 def read_root():
