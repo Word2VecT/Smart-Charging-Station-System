@@ -74,6 +74,17 @@ class ChargingOrderCreate(ChargingOrderBase):
     pass
 
 
+class SchedulingStrategy(BaseModel):
+    strategy: str
+
+    class Config:
+        orm_mode = True
+
+
+class SchedulingStrategyUpdate(BaseModel):
+    strategy: str
+
+
 class OperationalReportCreate(OperationalReportBase):
     pass
 

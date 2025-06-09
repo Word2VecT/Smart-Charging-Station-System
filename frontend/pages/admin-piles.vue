@@ -44,6 +44,36 @@
         </v-col>
       </v-row>
 
+      <!-- 调度策略切换 -->
+      <v-row class="mb-6">
+        <v-col>
+          <v-card class="glass-card pa-4">
+            <div class="d-flex align-center justify-space-between">
+              <div>
+                <h3 class="text-h6">调度策略</h3>
+                <p class="text-body-2 text-grey-darken-1">
+                  选择系统用于分配充电桩的算法
+                </p>
+              </div>
+              <div style="width: 300px">
+                <v-select
+                  v-model="currentStrategy"
+                  :items="strategyOptions"
+                  item-title="text"
+                  item-value="value"
+                  label="当前策略"
+                  variant="outlined"
+                  density="compact"
+                  @update:modelValue="updateStrategy"
+                  :loading="strategyLoading"
+                  hide-details
+                ></v-select>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+
       <!-- 批量操作面板 -->
       <v-expand-transition>
         <v-card v-show="showBatchOperations" class="mb-6" color="surface-variant">
@@ -446,6 +476,14 @@ const typeFilter = ref<string | null>(null)
 const detailsDialog = ref(false)
 const selectedPileDetails = ref<PileWithStatistics | null>(null)
 
+const strategyLoading = ref(false)
+const currentStrategy = ref('SHORTEST_INDIVIDUAL_COMPLETION')
+const strategyOptions = [
+  { text: '个体最优 (逐一分配)', value: 'SHORTEST_INDIVIDUAL_COMPLETION' },
+  { text: '批量最优 (N车M桩)', value: 'SHORTEST_BATCH_COMPLETION' },
+  { text: '全场最优 (满载调度)', value: 'BATCH_FULL_LOAD_SHORTEST_TIME' },
+]
+
 // 过滤选项
 const statusFilterOptions = [
   { title: '全部状态', value: null },
@@ -480,6 +518,37 @@ const filteredPiles = computed(() => {
   
   return result
 })
+
+// 获取调度策略
+const fetchSchedulingStrategy = async () => {
+  try {
+    strategyLoading.value = true
+    const data = await api('/admin/scheduling-strategy')
+    currentStrategy.value = data.strategy
+  } catch (error) {
+    console.error('Failed to fetch scheduling strategy:', error)
+  } finally {
+    strategyLoading.value = false
+  }
+}
+
+// 切换调度策略
+const updateStrategy = async (newStrategy: string) => {
+  try {
+    strategyLoading.value = true
+    const data = await api('/admin/scheduling-strategy', {
+      method: 'PUT',
+      body: { strategy: newStrategy }
+    })
+    currentStrategy.value = data.strategy
+  } catch (error) {
+    console.error('Failed to update scheduling strategy:', error)
+    // On failure, refresh from server to revert
+    await fetchSchedulingStrategy()
+  } finally {
+    strategyLoading.value = false
+  }
+}
 
 // 获取充电桩数据
 const fetchPilesData = async () => {
@@ -684,7 +753,7 @@ const setupPiles = async () => {
 }
 
 onMounted(async () => {
-  await fetchPilesData()
+  await Promise.all([fetchPilesData(), fetchSchedulingStrategy()])
 })
 </script>
 

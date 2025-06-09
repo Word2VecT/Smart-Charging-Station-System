@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, models, schemas
 from ..database import get_db
+from ..services.config_service import SchedulingStrategy, config_service
 from ..services.pile_simulator_service import pile_simulator_service
 
 router = APIRouter(
@@ -131,3 +132,24 @@ async def get_pile_logs(pile_id: int, db: AsyncSession = Depends(get_db)):
     """
     logs = await crud.get_logs_for_pile(db, pile_id=pile_id)
     return logs
+
+
+@router.get("/scheduling-strategy", response_model=schemas.SchedulingStrategy)
+async def get_scheduling_strategy():
+    """
+    Get the current scheduling strategy.
+    """
+    return {"strategy": config_service.scheduling_strategy.value}
+
+
+@router.put("/scheduling-strategy", response_model=schemas.SchedulingStrategy)
+async def set_scheduling_strategy(strategy_update: schemas.SchedulingStrategyUpdate):
+    """
+    Set the new scheduling strategy.
+    """
+    try:
+        new_strategy = SchedulingStrategy(strategy_update.strategy)
+        config_service.set_scheduling_strategy(new_strategy)
+        return {"strategy": config_service.scheduling_strategy.value}
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid strategy value")

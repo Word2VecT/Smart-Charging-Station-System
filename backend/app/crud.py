@@ -44,7 +44,7 @@ async def get_pile(db: AsyncSession, pile_id: int) -> Optional[models.ChargingPi
     return result.scalars().first()
 
 
-async def get_piles(db: AsyncSession, skip: int = 0, limit: int = 10) -> List[models.ChargingPile]:
+async def get_piles(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[models.ChargingPile]:
     result = await db.execute(select(models.ChargingPile).offset(skip).limit(limit))
     return result.scalars().all()
 
@@ -373,4 +373,31 @@ async def get_charging_request_by_pile_id(db: AsyncSession, pile_id: int) -> Opt
         .where(models.ChargingRequest.assigned_pile_id == pile_id)
         .where(models.ChargingRequest.status == models.RequestStatus.CHARGING)
     )
+    return result.scalars().first()
+
+
+async def get_available_piles(db: AsyncSession) -> List[models.ChargingPile]:
+    """
+    Get all piles that are currently available.
+    """
+    result = await db.execute(
+        select(models.ChargingPile).where(models.ChargingPile.status == models.PileStatus.AVAILABLE)
+    )
+    return result.scalars().all()
+
+
+async def get_available_piles_by_type(db: AsyncSession, pile_type: models.PileType) -> List[models.ChargingPile]:
+    """
+    Get all available piles of a specific type.
+    """
+    result = await db.execute(
+        select(models.ChargingPile)
+        .where(models.ChargingPile.status == models.PileStatus.AVAILABLE)
+        .where(models.ChargingPile.type == pile_type)
+    )
+    return result.scalars().all()
+
+
+async def get_pile_by_code(db: AsyncSession, pile_code: str) -> Optional[models.ChargingPile]:
+    result = await db.execute(select(models.ChargingPile).where(models.ChargingPile.pile_code == pile_code))
     return result.scalars().first()
