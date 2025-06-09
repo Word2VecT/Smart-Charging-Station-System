@@ -76,6 +76,17 @@ export const useRequest = () => {
         return response;
     };
 
+    const reportFault = async (pileId) => {
+        const response = await api(`/requests/fault-report/${pileId}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token.value}`
+            }
+        });
+        await fetchActiveRequest(); // Refresh state
+        return response;
+    };
+
     return {
         activeRequest,
         createRequest,
@@ -84,5 +95,6 @@ export const useRequest = () => {
         cancelRequest,
         stopRequest,
         updateRequest,
+        reportFault,
     };
 }; 

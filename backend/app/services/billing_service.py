@@ -66,26 +66,23 @@ class BillingService:
 
         return total_fee
 
-    async def finish_charging_session(
-        self, db: AsyncSession, request_id: int, end_time: dt.datetime, actual_charge_amount: Decimal
-    ) -> Optional[models.ChargingOrder]:
+    async def create_final_order(
+        self,
+        db: AsyncSession,
+        request: models.ChargingRequest,
+        pile: models.ChargingPile,
+        end_time: dt.datetime,
+        actual_charge_amount: Decimal,
+    ) -> models.ChargingOrder:
         """
-        Finalizes a charging session: calculates fees, creates an order, and updates system state.
+        Calculates fees and creates a charging order DB object without committing.
         """
-        request = await crud.get_request(db, request_id)
-        if not request or not request.start_time or not request.assigned_pile_id:
-            return None  # Cannot process if request is invalid or hasn't started
-
-        pile = await crud.get_pile(db, request.assigned_pile_id)
-        if not pile:
-            return None
-
         # 1. Calculate fees
         charge_fee = self.calculate_charge_fee(request.start_time, end_time, pile.power_rate)
         service_fee = actual_charge_amount * self.SERVICE_FEE_PER_KWH
         total_fee = charge_fee + service_fee
 
-        # 2. Create ChargingOrder
+        # 2. Create ChargingOrder object
         order_create = schemas.ChargingOrderCreate(
             request_id=request.request_id,
             user_id=request.user_id,
@@ -97,21 +94,64 @@ class BillingService:
             service_fee=round(service_fee, 2),
             total_fee=round(total_fee, 2),
         )
-        order = await crud.create_order(db, order=order_create)
+        # This adds to the session, but does not commit
+        return await crud.create_order(db, order=order_create)
 
-        # 3. Update related entities
+    async def finish_charging_session(
+        self,
+        db: AsyncSession,
+        request_id: int,
+        end_time: dt.datetime,
+        actual_charge_amount: Decimal,
+        final_pile_status: Optional[models.PileStatus] = None,
+    ) -> Optional[models.ChargingOrder]:
+        """
+        Finalizes a charging session: creates an order, updates states, and commits.
+        """
+        request = await crud.get_request(db, request_id)
+        if not request or not request.start_time or not request.assigned_pile_id:
+            return None  # Cannot process
+
+        pile = await crud.get_pile(db, request.assigned_pile_id)
+        if not pile:
+            return None
+
+        # Create the order object first
+        order = await self.create_final_order(db, request, pile, end_time, actual_charge_amount)
+
+        # Update states
         request.status = models.RequestStatus.FINISHED
         request.end_time = end_time
 
         pile_queue = queue_manager.pile_queues.get(pile.pile_id)
         if pile_queue:
             # Remove the finished request from the in-memory queue
-            # This is a simple but potentially slow approach for a deque
             new_deque = [r for r in pile_queue if r.request_id != request.request_id]
             pile_queue.clear()
             pile_queue.extend(new_deque)
 
-        # 4. Check if a new vehicle can start charging at the same pile
+        # Set the final status for the pile
+        if final_pile_status:
+            pile.status = final_pile_status
+        # If no specific final status is given, determine it based on queue
+        elif not pile_queue or not pile_queue[0]:
+            pile.status = models.PileStatus.AVAILABLE
+        else:
+            # Default behavior: start next in queue or set to available
+            await self.start_next_in_pile_queue(db, pile)
+
+        await db.merge(request)
+        await db.merge(pile)
+        await db.commit()
+        await db.refresh(order)
+
+        return order
+
+    async def start_next_in_pile_queue(self, db: AsyncSession, pile: models.ChargingPile):
+        """
+        Checks if there is a next vehicle in the queue and starts it.
+        """
+        pile_queue = queue_manager.pile_queues.get(pile.pile_id)
         if pile_queue:
             # There is another vehicle waiting at the pile, start it.
             next_request = pile_queue[0]
@@ -123,17 +163,8 @@ class BillingService:
             # The pile is now free
             pile.status = models.PileStatus.AVAILABLE
 
-        await db.merge(request)
         await db.merge(pile)
         await db.commit()
-
-        # Refresh the instances to get the latest state from the DB, including server-side defaults
-        await db.refresh(order)
-        await db.refresh(request)
-        order.request = request  # Manually attach the refreshed request
-
-        print(f"Session finished for request {request.queue_number}. Order {order.order_id} created.")
-        return order
 
 
 # Global instance

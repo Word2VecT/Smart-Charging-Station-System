@@ -1,369 +1,371 @@
 <template>
-  <div class="order-detail-page">
+  <div class="detail-page">
     <!-- 背景装饰 -->
     <div class="detail-background">
-      <div class="circuit-pattern"></div>
-      <div class="floating-data">
+      <div class="data-grid"></div>
+      <div class="floating-icons">
         <div
           v-for="i in 8"
           :key="i"
-          class="data-particle"
+          class="data-icon"
           :style="{
             left: Math.random() * 100 + '%',
-            animationDelay: Math.random() * 12 + 's',
-            animationDuration: (Math.random() * 8 + 6) + 's'
+            animationDelay: Math.random() * 15 + 's',
+            animationDuration: (Math.random() * 10 + 8) + 's'
           }"
         >
-          <v-icon :icon="getRandomDataIcon()" size="14" />
+          <v-icon :icon="getRandomIcon()" size="16" />
         </div>
       </div>
     </div>
 
     <v-container class="detail-container">
-      <!-- 返回按钮 -->
-      <div class="navigation-section mb-6">
-        <v-btn
-          to="/history"
-          variant="outlined"
-          color="primary"
-          class="btn-futuristic back-btn"
-          prepend-icon="mdi-arrow-left"
-          size="large"
-        >
-          返回历史记录
-        </v-btn>
-      </div>
-
-      <!-- 加载状态 -->
-      <div v-if="loading" class="loading-section">
-        <v-card class="loading-card glass-morph" elevation="0">
-          <v-card-text class="text-center pa-12">
-            <v-progress-circular
-              :size="60"
-              :width="4"
-              color="primary"
-              indeterminate
-              class="mb-4"
-            ></v-progress-circular>
-            <h3 class="text-h5 text-primary-custom mb-2">加载中...</h3>
-            <p class="text-body-1 text-secondary-custom">
-              正在获取订单详细信息
+      <!-- 页面标题 -->
+      <div class="page-header mb-6">
+        <div class="d-flex align-center justify-space-between flex-wrap">
+          <div class="header-content">
+            <div class="d-flex align-center mb-1">
+              <v-icon size="40" color="info" class="mr-3 pulse">
+                mdi-receipt-text
+              </v-icon>
+              <h1 class="text-h3 futuristic-font text-glow text-accent-blue ma-0">
+                充电详单
+              </h1>
+            </div>
+            <p class="text-body-1 text-secondary-custom mb-0 ml-12">
+              查看您的充电订单详细信息
             </p>
-          </v-card-text>
-        </v-card>
-      </div>
-
-      <!-- 错误状态 -->
-      <div v-else-if="!order" class="error-section">
-        <v-card class="error-card glass-morph" elevation="0">
-          <v-card-text class="text-center pa-12">
-            <v-icon size="80" color="error" class="mb-4">
-              mdi-alert-circle-outline
-            </v-icon>
-            <h3 class="text-h4 text-error-custom mb-4">
-              订单未找到
-            </h3>
-            <p class="text-body-1 text-secondary-custom mb-6">
-              订单不存在或您没有权限查看此订单
-            </p>
+          </div>
+          <div class="header-actions d-flex align-center">
             <v-btn
-              to="/history"
-              variant="flat"
+              @click="goBack"
+              variant="outlined"
               color="primary"
-              class="btn-futuristic"
+              class="btn-futuristic mr-3"
               prepend-icon="mdi-arrow-left"
             >
-              返回历史记录
+              返回历史
             </v-btn>
-          </v-card-text>
+            <v-btn
+              @click="loadDetails"
+              variant="flat"
+              color="success"
+              class="btn-futuristic neon-glow"
+              :loading="loading"
+              prepend-icon="mdi-refresh"
+            >
+              刷新数据
+            </v-btn>
+          </div>
+        </div>
+      </div>
+
+             <!-- 加载状态 -->
+       <div v-if="loading" class="loading-section text-center mb-6">
+         <v-card class="glass-morph card-hover pa-6" elevation="0">
+          <v-progress-circular 
+            indeterminate 
+            color="success" 
+            size="64"
+            width="4"
+            class="mb-4"
+          ></v-progress-circular>
+          <p class="text-h6 text-primary-custom mb-0 futuristic-font">
+            正在加载详单数据...
+          </p>
         </v-card>
       </div>
 
-      <!-- 订单详情 -->
-      <div v-else class="order-details">
-        <!-- 订单标题卡片 -->
-        <v-card class="header-card glass-morph card-hover mb-6" elevation="0">
-          <v-card-text class="pa-8">
-            <div class="d-flex align-center justify-space-between flex-wrap">
-              <div class="order-header">
-                <div class="d-flex align-center mb-3">
-                  <v-icon size="48" color="success" class="mr-4 pulse">
-                    mdi-receipt
-                  </v-icon>
-                  <div>
-                    <h1 class="text-h3 futuristic-font text-glow text-accent-blue mb-1">
-                      订单 #{{ order.order_id }}
-                    </h1>
-                    <p class="text-h6 text-secondary-custom ma-0">
-                      {{ formatDateTime(order.created_at) }}
-                    </p>
+      <!-- 详单内容 -->
+      <div v-else-if="historyItem" class="detail-content">
+                 <!-- 基本信息卡片 -->
+         <v-card class="detail-card glass-morph card-hover mb-4" elevation="0">
+           <v-card-title class="detail-card-header pa-4">
+             <div class="d-flex align-center">
+               <v-icon size="28" color="info" class="mr-3">
+                 mdi-receipt-text
+               </v-icon>
+               <div>
+                 <span class="futuristic-font text-glow text-primary-custom text-h6">
+                   订单详情
+                 </span>
+                 <div class="text-caption text-muted-custom mt-1">
+                   订单编号: #{{ historyItem.order_id }}
+                 </div>
+               </div>
+             </div>
+           </v-card-title>
+           
+           <v-card-text class="pa-0">
+             <div class="detail-grid pa-4">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <div class="info-item glass-inner pa-4">
+                    <div class="d-flex align-center mb-2">
+                      <v-icon color="success" size="24" class="mr-3">mdi-calendar-clock</v-icon>
+                      <span class="text-primary-custom font-weight-bold">详单生成时间</span>
+                    </div>
+                    <div class="text-h6 text-accent-blue font-weight-medium">
+                      {{ formatDateTime(historyItem.created_at) }}
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="order-status">
-                <v-chip
-                  color="success"
-                  variant="elevated"
-                  size="large"
-                  class="status-chip-large"
-                >
-                  <v-icon size="16" class="mr-2">mdi-check-circle</v-icon>
-                  已完成
-                </v-chip>
-              </div>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <div class="info-item glass-inner pa-4">
+                    <div class="d-flex align-center mb-2">
+                      <v-icon color="warning" size="24" class="mr-3">mdi-ev-station</v-icon>
+                      <span class="text-primary-custom font-weight-bold">充电桩编号</span>
+                    </div>
+                    <div class="text-h6 text-warning-custom font-weight-medium">
+                      {{ historyItem.pile_code }}
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
             </div>
           </v-card-text>
         </v-card>
 
-        <!-- 费用信息卡片 -->
-        <v-row class="mb-6">
-          <v-col cols="12" md="8">
-            <v-card class="fee-card glass-morph card-hover" elevation="0">
-              <v-card-title class="card-title pa-6">
-                <div class="d-flex align-center">
-                  <v-icon size="32" color="warning" class="mr-3">
-                    mdi-currency-cny
-                  </v-icon>
-                  <span class="futuristic-font text-glow">费用详情</span>
-                </div>
-              </v-card-title>
-              <v-card-text class="pa-6">
-                <v-row>
-                  <v-col cols="12" sm="4">
-                    <div class="fee-item text-center">
-                      <div class="fee-icon mb-3">
-                        <v-icon size="40" color="success">mdi-cash-multiple</v-icon>
-                      </div>
-                      <h3 class="text-h4 text-success-custom font-weight-bold mb-2">
-                        ¥{{ order.total_fee.toFixed(2) }}
-                      </h3>
-                      <p class="text-body-1 text-muted-custom">总费用</p>
+                 <!-- 充电信息卡片 -->
+         <v-card class="detail-card glass-morph card-hover mb-4" elevation="0">
+           <v-card-title class="detail-card-header pa-4">
+             <div class="d-flex align-center">
+               <v-icon size="28" color="success" class="mr-3">
+                 mdi-lightning-bolt
+               </v-icon>
+               <span class="futuristic-font text-glow text-success-custom text-h6">
+                 充电信息
+               </span>
+             </div>
+           </v-card-title>
+           
+           <v-card-text class="pa-0">
+             <div class="detail-grid pa-4">
+              <v-row>
+                <v-col cols="12" md="4">
+                  <div class="info-item glass-inner pa-4 text-center">
+                    <div class="d-flex align-center justify-center mb-2">
+                      <v-icon color="success" size="24" class="mr-2">mdi-battery</v-icon>
+                      <span class="text-primary-custom font-weight-bold">充电电量</span>
                     </div>
-                  </v-col>
-                  <v-col cols="12" sm="4">
-                    <div class="fee-item text-center">
-                      <div class="fee-icon mb-3">
-                        <v-icon size="40" color="info">mdi-cog</v-icon>
-                      </div>
-                      <h3 class="text-h4 text-info-custom font-weight-bold mb-2">
-                        ¥{{ order.service_fee.toFixed(2) }}
-                      </h3>
-                      <p class="text-body-1 text-muted-custom">服务费</p>
+                    <div class="text-h4 text-success-custom font-weight-bold mb-1">
+                      {{ historyItem.actual_charge_amount }}
                     </div>
-                  </v-col>
-                  <v-col cols="12" sm="4">
-                    <div class="fee-item text-center">
-                      <div class="fee-icon mb-3">
-                        <v-icon size="40" color="primary">mdi-lightning-bolt</v-icon>
-                      </div>
-                      <h3 class="text-h4 text-primary-custom font-weight-bold mb-2">
-                        ¥{{ order.charge_fee.toFixed(2) }}
-                      </h3>
-                      <p class="text-body-1 text-muted-custom">充电费</p>
-                    </div>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-card class="energy-card glass-morph card-hover" elevation="0">
-              <v-card-title class="card-title pa-6">
-                <div class="d-flex align-center">
-                  <v-icon size="32" color="success" class="mr-3">
-                    mdi-battery-charging
-                  </v-icon>
-                  <span class="futuristic-font text-glow">充电量</span>
-                </div>
-              </v-card-title>
-              <v-card-text class="pa-6 text-center">
-                <div class="energy-display">
-                  <div class="energy-circle mb-4">
-                    <v-progress-circular
-                      :model-value="100"
-                      :size="120"
-                      :width="8"
-                      color="success"
-                      class="energy-progress"
-                    >
-                      <div class="energy-value">
-                        <h2 class="text-h3 text-success-custom font-weight-bold">
-                          {{ order.actual_charge_amount.toFixed(1) }}
-                        </h2>
-                        <p class="text-body-2 text-muted-custom">kWh</p>
-                      </div>
-                    </v-progress-circular>
+                    <div class="text-caption text-muted-custom">kWh</div>
                   </div>
-                  <p class="text-body-1 text-secondary-custom">
-                    实际充电量
-                  </p>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <div class="info-item glass-inner pa-4 text-center">
+                    <div class="d-flex align-center justify-center mb-2">
+                      <v-icon color="info" size="24" class="mr-2">mdi-clock</v-icon>
+                      <span class="text-primary-custom font-weight-bold">充电时长</span>
+                    </div>
+                    <div class="text-h4 text-accent-blue font-weight-bold mb-1">
+                      {{ formatDurationShort(historyItem.charge_duration_seconds) }}
+                    </div>
+                    <div class="text-caption text-muted-custom">
+                      {{ formatDuration(historyItem.charge_duration_seconds) }}
+                    </div>
+                  </div>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <div class="info-item glass-inner pa-4 text-center">
+                    <div class="d-flex align-center justify-center mb-2">
+                      <v-icon color="warning" size="24" class="mr-2">mdi-currency-cny</v-icon>
+                      <span class="text-primary-custom font-weight-bold">总费用</span>
+                    </div>
+                    <div class="text-h4 text-warning-custom font-weight-bold mb-1">
+                      ¥{{ historyItem.total_fee }}
+                    </div>
+                    <div class="text-caption text-muted-custom">人民币</div>
+                  </div>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card-text>
+        </v-card>
 
-        <!-- 充电信息卡片 -->
-        <v-row class="mb-6">
-          <v-col cols="12" md="6">
-            <v-card class="time-card glass-morph card-hover" elevation="0">
-              <v-card-title class="card-title pa-6">
-                <div class="d-flex align-center">
-                  <v-icon size="32" color="info" class="mr-3">
-                    mdi-clock-outline
-                  </v-icon>
-                  <span class="futuristic-font text-glow">充电时间</span>
-                </div>
-              </v-card-title>
-              <v-card-text class="pa-6">
-                <div class="time-info">
-                  <div class="time-item mb-4">
+                 <!-- 时间信息卡片 -->
+         <v-card class="detail-card glass-morph card-hover mb-4" elevation="0">
+           <v-card-title class="detail-card-header pa-4">
+             <div class="d-flex align-center">
+               <v-icon size="28" color="primary" class="mr-3">
+                 mdi-timeline-clock
+               </v-icon>
+               <span class="futuristic-font text-glow text-primary-custom text-h6">
+                 时间信息
+               </span>
+             </div>
+           </v-card-title>
+           
+           <v-card-text class="pa-0">
+             <div class="detail-grid pa-4">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <div class="info-item glass-inner pa-4">
                     <div class="d-flex align-center mb-2">
-                      <v-icon size="20" color="success" class="mr-2">
-                        mdi-play-circle
-                      </v-icon>
-                      <span class="text-body-1 font-weight-medium text-primary-custom">
-                        开始时间
-                      </span>
+                      <v-icon color="success" size="24" class="mr-3">mdi-play-circle</v-icon>
+                      <span class="text-primary-custom font-weight-bold">启动时间</span>
                     </div>
-                    <p class="text-h6 text-secondary-custom ml-7">
-                      {{ formatDateTime(order.start_time) }}
-                    </p>
+                    <div class="text-h6 text-success-custom font-weight-medium">
+                      {{ formatDateTime(historyItem.start_time) }}
+                    </div>
                   </div>
-                  <div class="time-item mb-4">
+                </v-col>
+                <v-col cols="12" md="6">
+                  <div class="info-item glass-inner pa-4">
                     <div class="d-flex align-center mb-2">
-                      <v-icon size="20" color="error" class="mr-2">
-                        mdi-stop-circle
-                      </v-icon>
-                      <span class="text-body-1 font-weight-medium text-primary-custom">
-                        结束时间
-                      </span>
+                      <v-icon color="error" size="24" class="mr-3">mdi-stop-circle</v-icon>
+                      <span class="text-primary-custom font-weight-bold">停止时间</span>
                     </div>
-                    <p class="text-h6 text-secondary-custom ml-7">
-                      {{ formatDateTime(order.end_time) }}
-                    </p>
-                  </div>
-                  <div class="duration-display pa-4 rounded-lg">
-                    <div class="text-center">
-                      <v-icon size="40" color="warning" class="mb-2">
-                        mdi-timer
-                      </v-icon>
-                      <h3 class="text-h5 text-warning-custom font-weight-bold">
-                        {{ chargeDuration }}
-                      </h3>
-                      <p class="text-body-2 text-muted-custom">充电时长</p>
+                    <div class="text-h6 text-error font-weight-medium">
+                      {{ formatDateTime(historyItem.end_time) }}
                     </div>
                   </div>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-card class="device-card glass-morph card-hover" elevation="0">
-              <v-card-title class="card-title pa-6">
-                <div class="d-flex align-center">
-                  <v-icon size="32" color="primary" class="mr-3">
-                    mdi-ev-station
-                  </v-icon>
-                  <span class="futuristic-font text-glow">设备信息</span>
-                </div>
-              </v-card-title>
-              <v-card-text class="pa-6">
-                <div class="device-info">
-                  <div class="device-item mb-6">
-                    <div class="d-flex align-center justify-space-between pa-4 device-item-bg rounded-lg">
-                      <div class="d-flex align-center">
-                        <v-icon size="32" color="primary" class="mr-3">
-                          mdi-tower-fire
-                        </v-icon>
-                        <div>
-                          <p class="text-body-1 font-weight-medium text-primary-custom mb-1">
-                            充电桩 ID
-                          </p>
-                          <h3 class="text-h5 text-accent-blue font-weight-bold">
-                            #{{ order.pile_id }}
-                          </h3>
-                        </div>
-                      </div>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card-text>
+        </v-card>
+
+                 <!-- 费用明细卡片 -->
+         <v-card class="detail-card glass-morph card-hover" elevation="0">
+           <v-card-title class="detail-card-header pa-4">
+             <div class="d-flex align-center">
+               <v-icon size="28" color="warning" class="mr-3">
+                 mdi-calculator
+               </v-icon>
+               <span class="futuristic-font text-glow text-warning-custom text-h6">
+                 费用明细
+               </span>
+             </div>
+           </v-card-title>
+           
+           <v-card-text class="pa-0">
+             <div class="fee-section pa-4">
+              <v-row>
+                                 <v-col cols="12" md="4">
+                   <div class="fee-item glass-inner pa-4 text-center">
+                     <v-icon size="36" color="info" class="mb-2">mdi-flash</v-icon>
+                     <h3 class="text-subtitle-1 text-primary-custom mb-2">充电费用</h3>
+                    <div class="text-h4 text-accent-blue font-weight-bold">
+                      ¥{{ historyItem.charge_fee }}
                     </div>
                   </div>
-                  <div class="device-item">
-                    <div class="d-flex align-center justify-space-between pa-4 device-item-bg rounded-lg">
-                      <div class="d-flex align-center">
-                        <v-icon size="32" color="secondary" class="mr-3">
-                          mdi-identifier
-                        </v-icon>
-                        <div>
-                          <p class="text-body-1 font-weight-medium text-primary-custom mb-1">
-                            请求 ID
-                          </p>
-                          <h3 class="text-h5 text-accent-orange font-weight-bold">
-                            #{{ order.request_id }}
-                          </h3>
-                        </div>
-                      </div>
+                </v-col>
+                                 <v-col cols="12" md="4">
+                   <div class="fee-item glass-inner pa-4 text-center">
+                     <v-icon size="36" color="success" class="mb-2">mdi-cog</v-icon>
+                     <h3 class="text-subtitle-1 text-primary-custom mb-2">服务费用</h3>
+                    <div class="text-h4 text-success-custom font-weight-bold">
+                      ¥{{ historyItem.service_fee }}
                     </div>
                   </div>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                </v-col>
+                                 <v-col cols="12" md="4">
+                   <div class="fee-item glass-inner pa-4 text-center total-fee">
+                     <v-icon size="36" color="warning" class="mb-2 pulse">mdi-currency-cny</v-icon>
+                     <h3 class="text-subtitle-1 text-primary-custom mb-2">总计费用</h3>
+                    <div class="text-h3 text-warning-custom font-weight-bold neon-glow">
+                      ¥{{ historyItem.total_fee }}
+                    </div>
+                  </div>
+                </v-col>
+              </v-row>
+            </div>
+          </v-card-text>
+        </v-card>
+      </div>
+
+             <!-- 错误状态 -->
+       <div v-else class="error-section text-center">
+         <v-card class="glass-morph card-hover pa-6" elevation="0">
+          <v-icon size="64" color="error" class="mb-4">mdi-alert-circle</v-icon>
+          <h3 class="text-h5 text-error mb-4 futuristic-font">无法加载详单信息</h3>
+          <p class="text-body-1 text-muted-custom mb-6">
+            抱歉，我们无法获取您的充电详单数据，请稍后重试。
+          </p>
+          <div class="d-flex justify-center gap-4">
+            <v-btn 
+              color="primary" 
+              variant="outlined" 
+              class="btn-futuristic"
+              @click="loadDetails"
+              prepend-icon="mdi-refresh"
+            >
+              重新加载
+            </v-btn>
+            <v-btn 
+              color="success" 
+              variant="flat" 
+              class="btn-futuristic neon-glow"
+              @click="goBack"
+              prepend-icon="mdi-arrow-left"
+            >
+              返回历史
+            </v-btn>
+          </div>
+        </v-card>
       </div>
     </v-container>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { useOrder } from '~/composables/useOrder';
+import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useHistory } from '~/composables/useHistory';
 
 const route = useRoute();
-const { order, fetchOrderById } = useOrder();
-const loading = ref(false);
+const router = useRouter();
+const { historyItem, fetchHistoryItemById } = useHistory();
+const loading = ref(true);
 
-const orderId = route.params.id;
-
-const chargeDuration = computed(() => {
-  if (!order.value) return 'N/A';
-  const start = new Date(order.value.start_time);
-  const end = new Date(order.value.end_time);
-  const diffMs = end - start;
-  const diffMins = Math.round(diffMs / 60000);
-  const hours = Math.floor(diffMins / 60);
-  const mins = diffMins % 60;
-  
-  if (hours > 0) {
-    return `${hours}小时${mins}分钟`;
-  }
-  return `${mins}分钟`;
-});
-
-const formatDateTime = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
+const loadDetails = async () => {
+  loading.value = true;
+  const id = route.params.id;
+  await fetchHistoryItemById(id);
+  loading.value = false;
 };
 
-const getRandomDataIcon = () => {
-  const icons = ['mdi-chart-line', 'mdi-database', 'mdi-server', 'mdi-cloud'];
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return 'N/A';
+  const options = {
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  };
+  return new Intl.DateTimeFormat('zh-CN', options).format(new Date(dateTimeString));
+};
+
+const formatDuration = (seconds) => {
+  if (seconds === null || seconds === undefined) return 'N/A';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  return `${h}小时 ${m}分钟 ${s}秒`;
+};
+
+const formatDurationShort = (seconds) => {
+  if (seconds === null || seconds === undefined) return 'N/A';
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  if (h > 0) {
+    return `${h}:${m.toString().padStart(2, '0')}`;
+  }
+  return `${m}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
+};
+
+const getRandomIcon = () => {
+  const icons = ['mdi-flash', 'mdi-battery', 'mdi-car-electric', 'mdi-ev-station', 'mdi-receipt'];
   return icons[Math.floor(Math.random() * icons.length)];
 };
 
-onMounted(async () => {
-  loading.value = true;
-  try {
-    await fetchOrderById(orderId);
-  } finally {
-    loading.value = false;
-  }
+const goBack = () => {
+  router.push('/history');
+};
+
+onMounted(() => {
+  loadDetails();
 });
 
 definePageMeta({
@@ -372,7 +374,7 @@ definePageMeta({
 </script>
 
 <style scoped>
-.order-detail-page {
+.detail-page {
   position: relative;
   min-height: 100vh;
   background: linear-gradient(135deg, #0F0F23 0%, #1A1A2E 100%) !important;
@@ -387,53 +389,51 @@ definePageMeta({
   z-index: -1;
 }
 
-.circuit-pattern {
+.data-grid {
   position: absolute;
   width: 100%;
   height: 100%;
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(0, 217, 255, 0.1) 2px, transparent 2px),
-    radial-gradient(circle at 75% 75%, rgba(255, 107, 53, 0.1) 2px, transparent 2px),
-    linear-gradient(90deg, rgba(0, 217, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(rgba(255, 107, 53, 0.03) 1px, transparent 1px);
-  background-size: 100px 100px, 100px 100px, 25px 25px, 25px 25px;
-  animation: circuitMove 20s linear infinite;
+    linear-gradient(90deg, rgba(76, 175, 80, 0.05) 1px, transparent 1px),
+    linear-gradient(rgba(76, 175, 80, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridMove 30s linear infinite;
 }
 
-@keyframes circuitMove {
+@keyframes gridMove {
   0% {
     transform: translate(0, 0);
   }
   100% {
-    transform: translate(25px, 25px);
+    transform: translate(40px, 40px);
   }
 }
 
-.floating-data {
+.floating-icons {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-.data-particle {
+.data-icon {
   position: absolute;
-  color: rgba(0, 217, 255, 0.4);
-  animation: dataFloat 8s infinite linear;
+  color: rgba(76, 175, 80, 0.3);
+  animation: iconFloat 10s infinite linear;
 }
 
-@keyframes dataFloat {
+@keyframes iconFloat {
   0% {
     transform: translateY(100vh) rotate(0deg);
     opacity: 0;
   }
-  20% {
+  10% {
     opacity: 1;
   }
-  80% {
+  90% {
     opacity: 1;
   }
   100% {
-    transform: translateY(-50px) rotate(360deg);
+    transform: translateY(-20px) rotate(360deg);
     opacity: 0;
   }
 }
@@ -444,181 +444,105 @@ definePageMeta({
   padding-top: 2rem;
 }
 
-.back-btn {
+.page-header {
+  position: relative;
+}
+
+.header-actions {
+  gap: 1rem;
+}
+
+.detail-card {
+  border-radius: 20px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  background: rgba(26, 26, 46, 0.8);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.detail-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(76, 175, 80, 0.4);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+}
+
+.detail-card-header {
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.info-item {
   border-radius: 12px;
-  font-weight: 600;
-}
-
-.loading-card,
-.error-card {
-  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(26, 26, 46, 0.8);
-}
-
-.header-card {
-  border-radius: 20px;
-  border: 1px solid rgba(0, 217, 255, 0.3);
-  background: rgba(26, 26, 46, 0.8);
-}
-
-.status-chip-large {
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.fee-card,
-.energy-card,
-.time-card,
-.device-card {
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(26, 26, 46, 0.8);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.3s ease;
   height: 100%;
 }
 
-.card-title {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+.info-item:hover {
+  border-color: rgba(76, 175, 80, 0.3);
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.glass-inner {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .fee-item {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
   transition: all 0.3s ease;
+  height: 100%;
 }
 
 .fee-item:hover {
   transform: translateY(-4px);
+  border-color: rgba(76, 175, 80, 0.3);
+  background: rgba(76, 175, 80, 0.05);
 }
 
-.fee-icon {
-  position: relative;
+.total-fee {
+  border-color: rgba(255, 193, 7, 0.3) !important;
+  background: rgba(255, 193, 7, 0.05) !important;
 }
 
-.fee-icon::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 60px;
-  height: 60px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  animation: iconPulse 2s infinite;
+.total-fee:hover {
+  border-color: rgba(255, 193, 7, 0.5) !important;
+  background: rgba(255, 193, 7, 0.1) !important;
 }
 
-@keyframes iconPulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.1;
-  }
-}
-
-.energy-display {
-  position: relative;
-}
-
-.energy-circle {
-  position: relative;
-  display: inline-block;
-}
-
-.energy-progress {
-  filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.2));
-}
-
-.energy-value {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.time-info {
-  position: relative;
-}
-
-.time-item {
-  position: relative;
-  padding-left: 1rem;
-}
-
-.time-item::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.5rem;
-  width: 2px;
-  height: calc(100% - 1rem);
-  background: linear-gradient(to bottom, rgba(0, 217, 255, 0.5), rgba(255, 107, 53, 0.5));
-  border-radius: 1px;
-}
-
-.duration-display {
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
-}
-
-.device-item-bg {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.device-item-bg:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(0, 217, 255, 0.3);
-  transform: translateY(-2px);
+.loading-section .v-card,
+.error-section .v-card {
+  border-radius: 20px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  background: rgba(26, 26, 46, 0.8);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .order-header .d-flex {
+  .page-header .d-flex {
     flex-direction: column;
     align-items: flex-start !important;
   }
   
-  .order-status {
+  .header-actions {
     margin-top: 1rem;
     width: 100%;
   }
   
+  .header-actions .v-btn {
+    flex: 1;
+  }
+  
+  .data-grid {
+    background-size: 25px 25px;
+  }
+  
+  .info-item,
   .fee-item {
-    margin-bottom: 2rem;
-  }
-  
-  .circuit-pattern {
-    background-size: 60px 60px, 60px 60px, 15px 15px, 15px 15px;
-  }
-  
-  .energy-progress {
-    width: 100px !important;
-    height: 100px !important;
-  }
-  
-  .energy-value h2 {
-    font-size: 1.5rem !important;
+    margin-bottom: 1rem;
   }
 }
-
-/* 卡片悬停效果增强 */
-.card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.2),
-    0 0 12px rgba(0, 217, 255, 0.08);
-}
-
-/* 加载动画 */
-.loading-card .v-progress-circular {
-  filter: drop-shadow(0 0 4px rgba(0, 217, 255, 0.2));
-}
-</style> 
+</style>

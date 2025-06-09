@@ -147,3 +147,23 @@ async def cancel_charging_request(
     if error_msg:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
     return cancelled_request
+
+
+@router.post("/fault-report/{pile_id}")
+async def report_pile_fault(
+    pile_id: int, db: AsyncSession = Depends(get_db), current_user: models.User = Depends(get_current_active_user)
+):
+    """
+    Report a fault for a charging pile. This will:
+    1. Stop any ongoing charging session and generate a bill
+    2. Set the pile status to FAULTY
+    3. Re-queue any remaining charge amount to the front of the waiting queue
+    """
+    from ..services.fault_service import fault_service
+
+    result = await fault_service.handle_pile_fault(db, pile_id)
+
+    if result["error"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result["error"])
+
+    return {"message": "故障上报成功", "details": result}

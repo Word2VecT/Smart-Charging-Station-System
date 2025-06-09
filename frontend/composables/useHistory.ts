@@ -18,21 +18,16 @@ export const useHistory = () => {
         }
     };
 
-    const fetchHistoryItemById = async (item) => {
+    const fetchHistoryItemById = async (item_id) => {
         // The detail view for requests is not on a separate page in this design,
         // but this function handles fetching order details.
-        if (item.item_type === 'ORDER') {
-            try {
-                const data = await api(`/orders/${item.item_id}`, {
-                    method: 'GET',
-                });
-                historyItem.value = data;
-            } catch (error) {
-                console.error(`Failed to fetch order ${item.item_id}:`, error);
-                historyItem.value = null;
-            }
-        } else {
-            // For requests, we don't have a separate detail page, so we just clear the state
+        try {
+            const data = await api(`/history/${item_id}`, {
+                method: 'GET',
+            });
+            historyItem.value = data;
+        } catch (error) {
+            console.error(`Failed to fetch order ${item_id}:`, error);
             historyItem.value = null;
         }
     };

@@ -129,7 +129,7 @@
                     :key="column.key"
                     class="table-header-cell"
                   >
-                    <div class="d-flex align-center">
+                    <div class="d-flex align-center" :class="`justify-${column.align}`">
                       <v-icon 
                         :icon="getHeaderIcon(column.key)" 
                         size="16" 
@@ -226,20 +226,6 @@
                   </div>
                 </div>
               </template>
-
-              <!-- 操作列 -->
-              <template v-slot:item.actions="{ item }">
-                <v-btn
-                  size="small"
-                  variant="outlined"
-                  color="primary"
-                  class="btn-futuristic"
-                  @click.stop="viewDetails(null, { item })"
-                >
-                  <v-icon size="16">mdi-eye</v-icon>
-                  查看
-                </v-btn>
-              </template>
             </v-data-table>
           </v-card-text>
         </v-card>
@@ -257,15 +243,14 @@ const { historyItems, fetchHistory } = useHistory();
 const router = useRouter();
 const loading = ref(false);
 
-const headers = [
-  { title: '类型', key: 'item_type', sortable: true },
-  { title: '状态', key: 'status', sortable: true },
-  { title: '日期时间', key: 'date', sortable: true },
-  { title: '充电模式', key: 'charge_type', sortable: true },
-  { title: '充电量', key: 'actual_charge_amount', sortable: false },
-  { title: '费用', key: 'total_fee', sortable: true },
-  { title: '操作', key: 'actions', sortable: false },
-];
+const headers = ref([
+  { title: "类型", key: "item_type", align: "center" },
+  { title: "状态", key: "status", align: "center" },
+  { title: "日期", key: "date", align: "center" },
+  { title: "充电模式", key: "charge_type", align: "center" },
+  { title: "充电量", key: "actual_charge_amount", align: "center" },
+  { title: "总费用", key: "total_fee", align: "center" },
+]);
 
 // 计算统计数据
 const completedCount = computed(() => {
@@ -349,21 +334,18 @@ const formatTime = (dateString) => {
   return new Date(dateString).toLocaleTimeString('zh-CN');
 };
 
+const viewDetails = (event, { item }) => {
+  if (item && item.item_type === 'ORDER') {
+    router.push(`/history/${item.item_id}`);
+  }
+};
+
 const loadHistory = async () => {
   loading.value = true;
   try {
     await fetchHistory();
   } finally {
     loading.value = false;
-  }
-};
-
-const viewDetails = (event, { item }) => {
-  if (item.item_type === 'ORDER') {
-    router.push(`/history/${item.item_id}`);
-  } else {
-    // For requests (WAITING, CHARGING), navigate to the homepage to see live status
-    router.push('/');
   }
 };
 

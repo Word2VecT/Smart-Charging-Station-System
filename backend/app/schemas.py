@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -152,16 +152,19 @@ class TokenData(BaseModel):
 
 # Admin Schemas
 
+
 class AdminBase(BaseModel):
     username: str
 
 
-class AdminCreate(AdminBase):
+class AdminCreate(BaseModel):
+    username: str
     password: str
 
 
-class Admin(AdminBase):
+class Admin(BaseModel):
     id: int
+    username: str
 
     class Config:
         from_attributes = True
@@ -200,3 +203,67 @@ class HistoryItem(BaseModel):
     actual_charge_amount: Optional[Decimal] = None
     total_fee: Optional[Decimal] = None
     charge_type: Optional[RequestType] = None
+
+
+# ===================
+# 管理员仪表盘相关 Schema
+# ===================
+
+
+class PileStatistics(BaseModel):
+    pile_id: int
+    total_charges: int
+    total_charging_duration_seconds: int
+    total_energy_consumed_kwh: float
+
+
+class CurrentVehicle(BaseModel):
+    request_id: int
+    user_id: int
+    username: str
+    queue_number: Optional[str]
+    requested_charge_amount: float
+    status: str
+    request_time: datetime
+    assigned_pile_id: Optional[int]
+    pile_code: Optional[str]
+    start_time: Optional[datetime]
+
+
+class PileWithStatistics(BaseModel):
+    pile_id: int
+    pile_code: str
+    type: PileType
+    status: PileStatus
+    power_rate: Decimal
+    statistics: PileStatistics
+
+
+class DashboardData(BaseModel):
+    piles: List[PileWithStatistics]
+    current_vehicles: List[CurrentVehicle]
+
+
+class PileSetup(BaseModel):
+    fast_piles: int
+    trickle_piles: int
+
+
+class OrderDetail(BaseModel):
+    """
+    Schema for the detailed view of a charging order.
+    """
+
+    order_id: int
+    created_at: datetime
+    pile_code: str
+    actual_charge_amount: Decimal
+    charge_duration_seconds: int
+    start_time: datetime
+    end_time: datetime
+    charge_fee: Decimal
+    service_fee: Decimal
+    total_fee: Decimal
+
+    class Config:
+        from_attributes = True

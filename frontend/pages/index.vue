@@ -110,17 +110,18 @@
                     to="/register"
                     size="x-large"
                     color="primary"
-                    class="btn-futuristic neon-glow mr-4 mb-2"
+                    class="btn-futuristic neon-glow mr-4 mb-4"
                     prepend-icon="mdi-account-plus"
                   >
                     立即注册
                   </v-btn>
+                  <div class="login-buttons-group">
                   <v-btn
                     to="/login"
                     size="x-large"
                     variant="outlined"
                     color="primary"
-                    class="btn-futuristic mb-2"
+                      class="btn-futuristic mr-4 mb-4"
                     prepend-icon="mdi-login"
                   >
                     用户登录
@@ -130,11 +131,12 @@
                   size="x-large"
                   variant="outlined"
                   color="red"
-                  class="btn-futuristic mb-2"
+                      class="btn-futuristic mb-4"
                   prepend-icon="mdi-shield-account"
                   >
                   管理员入口
                   </v-btn>
+                  </div>
                 </div>
               </div>
             </v-col>
@@ -324,6 +326,14 @@ definePageMeta({
   margin-top: 2rem;
 }
 
+.login-buttons-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .hero-content h1 {
@@ -345,6 +355,18 @@ definePageMeta({
   .action-buttons .v-btn {
     width: 100%;
     margin-bottom: 1rem;
+    margin-right: 0 !important;
+  }
+  
+  .login-buttons-group {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .login-buttons-group .v-btn {
+    width: 100%;
+    margin-right: 0 !important;
   }
 }
 

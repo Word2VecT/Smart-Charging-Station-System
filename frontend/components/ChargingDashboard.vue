@@ -171,7 +171,7 @@
               <v-btn
                 color="warning"
                 variant="outlined"
-                class="btn-futuristic"
+                class="btn-futuristic mr-4"
                 @click="isEditing = !isEditing"
                 prepend-icon="mdi-pencil"
               >
@@ -189,7 +189,7 @@
             </div>
 
             <!-- 充电状态的操作 -->
-            <div v-if="activeRequest.status === 'CHARGING'" class="d-flex justify-center">
+            <div v-if="activeRequest.status === 'CHARGING'" class="d-flex justify-center gap-4">
               <v-btn
                 color="error"
                 size="large"
@@ -198,6 +198,15 @@
                 prepend-icon="mdi-stop-circle"
               >
                 停止充电
+              </v-btn>
+              <v-btn
+                color="orange"
+                size="large"
+                class="btn-futuristic neon-glow"
+                @click="handleFaultReport"
+                prepend-icon="mdi-alert-circle"
+              >
+                故障上报
               </v-btn>
             </div>
           </div>
@@ -329,7 +338,7 @@ import { ref, onMounted, reactive, computed, onUnmounted } from 'vue';
 import { useRequest } from '~/composables/useRequest';
 import { usePile } from '~/composables/usePile';
 
-const { activeRequest, createRequest, fetchActiveRequest, cancelRequest, updateRequest, fetchWaitingQueue, stopRequest } = useRequest();
+const { activeRequest, createRequest, fetchActiveRequest, cancelRequest, updateRequest, fetchWaitingQueue, stopRequest, reportFault } = useRequest();
 const { piles, fetchPiles } = usePile();
 
 const loading = ref(false);
@@ -454,6 +463,17 @@ const handleUpdate = async () => {
         isEditing.value = false;
     } catch (e) {
         alert(e.data?.detail || 'Failed to update request.');
+    }
+};
+
+const handleFaultReport = async () => {
+    if (confirm('确定要上报充电桩故障吗？这将停止当前充电并设置充电桩为故障状态。')) {
+        try {
+            await reportFault(activeRequest.value.assigned_pile_id);
+            await fetchActiveRequest(); // Refresh state
+        } catch (e) {
+            alert(e.data?.detail || 'Failed to report fault.');
+        }
     }
 };
 

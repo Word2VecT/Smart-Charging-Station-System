@@ -108,7 +108,7 @@ class SchedulingService:
 
         all_piles = await crud.get_piles(db, limit=100)
         for pile in all_piles:
-            if pile.status not in [models.PileStatus.FAULTY, models.PileStatus.OFF]:
+            if pile.status == models.PileStatus.AVAILABLE:
                 if len(queue_manager.pile_queues.get(pile.pile_id, [])) < queue_manager.pile_queue_capacity:
                     available_piles_map[pile.type].append(pile)
 

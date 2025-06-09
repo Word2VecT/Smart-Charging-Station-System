@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, models, schemas
@@ -59,3 +59,42 @@ async def get_user_history(
     history_items.sort(key=lambda item: item.date, reverse=True)
 
     return history_items
+
+
+@router.get("/{order_id}", response_model=schemas.OrderDetail)
+async def get_order_details(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: models.User = Depends(get_current_active_user),
+):
+    """
+    Retrieve the detailed information for a specific order.
+    """
+    order = await crud.get_order_details(db, order_id=order_id, user_id=current_user.user_id)
+    if not order:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Order not found or you do not have permission to view it.",
+        )
+
+    if not order.pile:
+        # This case should be rare if data integrity is maintained
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Could not retrieve pile information for this order.",
+        )
+
+    charge_duration = order.end_time - order.start_time
+
+    return schemas.OrderDetail(
+        order_id=order.order_id,
+        created_at=order.created_at,
+        pile_code=order.pile.pile_code,
+        actual_charge_amount=order.actual_charge_amount,
+        charge_duration_seconds=int(charge_duration.total_seconds()),
+        start_time=order.start_time,
+        end_time=order.end_time,
+        charge_fee=order.charge_fee,
+        service_fee=order.service_fee,
+        total_fee=order.total_fee,
+    )

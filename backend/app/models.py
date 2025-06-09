@@ -131,6 +131,7 @@ class PileLog(Base):
 
     pile = relationship("ChargingPile")
 
+
 class Admin(Base):
     __tablename__ = "admins"
 
